@@ -1,0 +1,134 @@
+# Market Monitoring Bot - Main Configuration
+app:
+  name: "IFSA Market Monitor"
+  version: "1.0.0"
+  poll_interval_seconds: 60
+  log_level: "INFO"
+  environment: "production"
+
+assets:
+  # XAUUSD - Gold Spot
+  - symbol: "XAUUSD"
+    name: "Gold Spot / US Dollar"
+    type: "FOREX"  # FOREX, CRYPTO, COMMODITY
+    provider: "yahoo"  # yahoo, twelvedata, binance, coingecko
+    yahoo_symbol: "GC=F"  # Yahoo finance symbol for XAUUSD futures, or XAUUSD=X
+    enabled: true
+    alerts:
+      price_thresholds:
+        - level: 2000
+          direction: "above"
+          message: "Gold breaking $2000!"
+        - level: 1800
+          direction: "below"
+          message: "Gold dropping below $1800!"
+      percent_change: 1.5
+
+  - symbol: "BTCUSDT"
+    name: "Bitcoin / Tether"
+    type: "CRYPTO"
+    provider: "binance"
+    binance_symbol: "BTCUSDT"
+    enabled: true
+    alerts:
+      price_thresholds:
+        - level: 70000
+          direction: "above"
+          message: "BTC above $70k! 🚀"
+        - level: 60000
+          direction: "below"
+          message: "BTC below $60k - potential buy?"
+      percent_change: 3.0
+
+  - symbol: "ETHUSDT"
+    name: "Ethereum / Tether"
+    type: "CRYPTO"
+    provider: "binance"
+    binance_symbol: "ETHUSDT"
+    enabled: true
+    alerts:
+      percent_change: 3.0
+
+  - symbol: "EURUSD"
+    name: "Euro / US Dollar"
+    type: "FOREX"
+    provider: "yahoo"
+    yahoo_symbol: "EURUSD=X"
+    enabled: true
+    alerts:
+      percent_change: 0.8
+
+indicators:
+  rsi:
+    enabled: true
+    period: 14
+    overbought: 70
+    oversold: 30
+    # Alert when RSI crosses these levels
+    alert_on_cross: true
+
+  moving_averages:
+    enabled: true
+    sma_fast: 50
+    sma_slow: 200
+    ema_fast: 9
+    ema_slow: 21
+    alert_on_crossover: true  # Golden Cross / Death Cross
+
+  macd:
+    enabled: true
+    fast: 12
+    slow: 26
+    signal: 9
+    alert_on_crossover: true
+
+  bollinger:
+    enabled: false
+    period: 20
+    std_dev: 2
+    alert_on_breakout: true
+
+  price_action:
+    enabled: true
+    percent_change_threshold: 2.0
+    # Detect large wicks, breakouts
+    detect_breakouts: true
+
+alerts:
+  cooldown_seconds: 900  # 15 minutes cooldown per asset per alert type
+  max_retries: 3
+  channels:
+    telegram:
+      enabled: false
+      parse_mode: "MarkdownV2"
+    discord:
+      enabled: false
+      include_chart: false
+    webhook:
+      enabled: false
+      url: ""
+    console:
+      enabled: true
+
+scheduling:
+  # For Netlify scheduled functions - cron expression
+  netlify_cron: "*/5 * * * *"  # Every 5 minutes
+  # For APScheduler
+  timezone: "UTC"
+
+persistence:
+  state_file: "./data/state.json"
+  history_file: "./data/alert_history.json"
+  use_redis: false
+  redis_url: "redis://localhost:6379/0"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  enable_docs: true
+  secret_key: ""
+  cors_origins: ["*"]
+
+dashboard:
+  enabled: true
+  refresh_interval: 30000

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFSA Market Monitor - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1><i class="fas fa-chart-line"></i> IFSA Market Monitor</h1>
+                <span class="badge" id="statusBadge">Loading...</span>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-primary" id="triggerBtn"><i class="fas fa-bolt"></i> Trigger Scan</button>
+                <button class="btn btn-secondary" id="testAlertBtn"><i class="fas fa-bell"></i> Test Alert</button>
+                <span class="last-update" id="lastUpdate">-</span>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-coins"></i></div>
+                <div class="stat-content">
+                    <h3 id="totalAssets">-</h3>
+                    <p>Tracked Assets</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-bell"></i></div>
+                <div class="stat-content">
+                    <h3 id="totalAlerts">-</h3>
+                    <p>Total Alerts Sent</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-content">
+                    <h3 id="uptime">-</h3>
+                    <p>Uptime</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-heart-pulse"></i></div>
+                <div class="stat-content">
+                    <h3 id="healthStatus">-</h3>
+                    <p>Health</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-grid">
+            <!-- Assets -->
+            <section class="card assets-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-bar"></i> Market Overview</h2>
+                    <div class="card-actions">
+                        <select id="intervalSelect">
+                            <option value="1m">1m</option>
+                            <option value="5m">5m</option>
+                            <option value="1h" selected>1h</option>
+                            <option value="1d">1d</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="assets-table">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Price</th>
+                                    <th>RSI (14)</th>
+                                    <th>SMA 50 / 200</th>
+                                    <th>EMA 9 / 21</th>
+                                    <th>MACD</th>
+                                    <th>Signal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assetsTableBody">
+                                <tr><td colspan="7" class="loading">Loading assets...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alerts History -->
+            <section class="card alerts-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i> Recent Alerts</h2>
+                    <button class="btn btn-sm" id="refreshAlerts"><i class="fas fa-sync"></i></button>
+                </div>
+                <div class="card-body">
+                    <div id="alertsList" class="alerts-list">
+                        <div class="loading">Loading alerts...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Config & Channels -->
+        <section class="card config-card">
+            <div class="card-header">
+                <h2><i class="fas fa-cogs"></i> Configuration & Channels</h2>
+            </div>
+            <div class="card-body">
+                <div class="config-grid">
+                    <div class="config-item">
+                        <h4>Telegram</h4>
+                        <span id="telegramStatus" class="status-dot">-</span>
+                        <small>Bot alerts via Telegram</small>
+                    </div>
+                    <div class="config-item">
+                        <h4>Discord</h4>
+                        <span id="discordStatus" class="status-dot">-</span>
+                        <small>Webhook alerts via Discord</small>
+                    </div>
+                    <div class="config-item">
+                        <h4>Indicators</h4>
+                        <div id="indicatorsList" class="indicators-list">-</div>
+                    </div>
+                    <div class="config-item">
+                        <h4>Deployment</h4>
+                        <div class="deploy-badges">
+                            <span class="badge">Netlify Functions</span>
+                            <span class="badge">Hostinger VPS</span>
+                            <span class="badge">Docker</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>IFSA Market Monitor v1.0.0 | Event-driven | Real-time RSI & MA Crossovers | XAUUSD, Crypto, Forex</p>
+            <p>Built with <i class="fas fa-heart"></i> for traders | <a href="/docs" target="_blank">API Docs</a> | <a href="https://github.com/billy1234678u/IFSA" target="_blank">GitHub</a></p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
