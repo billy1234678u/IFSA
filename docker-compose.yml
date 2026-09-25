@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Main API + Bot service
+  market-monitor:
+    build: .
+    container_name: ifsa-market-monitor
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      - ENVIRONMENT=production
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    # Combined mode: Run both API and background bot via custom entrypoint
+    command: >
+      sh -c "uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --workers 1 &
+             python -m src.bot &
+             wait"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - ifsa-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Optional: Redis for distributed state (if needed for scaling)
+  # Uncomment if you want Redis persistence
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: ifsa-redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   networks:
+  #     - ifsa-network
+
+  # Optional: Monitoring with Prometheus (for Hostinger VPS)
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: ifsa-prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+  #   networks:
+  #     - ifsa-network
+
+networks:
+  ifsa-network:
+    driver: bridge
+
+# volumes:
+#   redis_data:

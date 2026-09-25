@@ -1,0 +1,67 @@
+# Netlify Configuration for IFSA Market Monitor
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Python runtime for functions
+  command = "pip install -r requirements.txt && npm install --prefix dashboard || true"
+  publish = "dashboard"
+  functions = "netlify/functions"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+  NODE_VERSION = "18"
+
+# Functions config
+[functions]
+  # Global functions settings
+  node_bundler = "esbuild"
+  # Python functions
+  included_files = ["src/**", "config.yaml", "data/**"]
+
+# Scheduled function - Market Monitor runs every 5 minutes
+# https://docs.netlify.com/functions/scheduled-functions/
+[functions."monitor"]
+  schedule = "*/5 * * * *"
+
+# Redirects for API
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+[[redirects]]
+  from = "/trigger"
+  to = "/.netlify/functions/monitor"
+  status = 200
+
+# SPA fallback for dashboard
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-API-KEY"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+
+# Environment variables (set in Netlify UI, not here for secrets)
+# TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, DISCORD_WEBHOOK_URL, etc.

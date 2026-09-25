@@ -1,0 +1,36 @@
+{
+  "name": "ifsa-market-monitor",
+  "version": "1.0.0",
+  "description": "Automated, event-driven market monitoring bot for XAUUSD, crypto, forex with RSI & MA crossovers, Telegram/Discord alerts. Deployable on Netlify & Hostinger",
+  "main": "dashboard/index.html",
+  "scripts": {
+    "dev": "uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000",
+    "bot": "python -m src.bot",
+    "test": "pytest tests/ -v",
+    "lint": "flake8 src/",
+    "netlify:dev": "netlify dev",
+    "netlify:deploy": "netlify deploy --prod",
+    "docker:build": "docker build -t ifsa-market-monitor .",
+    "docker:run": "docker-compose up -d",
+    "docker:logs": "docker-compose logs -f",
+    "hostinger:deploy": "bash scripts/deploy_hostinger.sh"
+  },
+  "keywords": [
+    "trading",
+    "market-monitor",
+    "xauusd",
+    "crypto",
+    "rsi",
+    "moving-average",
+    "telegram",
+    "discord",
+    "netlify",
+    "hostinger",
+    "bot"
+  ],
+  "author": "IFSA",
+  "license": "MIT",
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
